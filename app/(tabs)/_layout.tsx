@@ -3,15 +3,13 @@ import React, { useState, useEffect } from 'react';
 import { View } from 'react-native';
 import { Tabs } from 'expo-router';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import AnimatedTabBar from '../../components/TaskBar'; // Asegúrate de que la ruta sea correcta
+import AnimatedTabBar from '../..//components/TaskBar';
 import LoadingScreen from '../../components/LoadingScreen';
-import Perfil from './Perfil';
 
 export default function Layout() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simula un tiempo de carga inicial
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 4000); 
@@ -21,15 +19,13 @@ export default function Layout() {
   return (
     <View style={{ flex: 1 }}>
       {isLoading ? (
-        // Pantalla de carga
         <LoadingScreen />
       ) : (
-        // Barra de pestañas principal
         <Tabs
           screenOptions={{
-            headerShown: false, // Oculta el encabezado en todas las pantallas
+            headerShown: false,
           }}
-          tabBar={(props) => <AnimatedTabBar {...props} />} // Barra de pestañas animada personalizada
+          tabBar={(props) => <AnimatedTabBar {...props} />} // Pasamos props a AnimatedTabBar
         >
           <Tabs.Screen
             name="PaginaPrincipal"
@@ -41,11 +37,11 @@ export default function Layout() {
             }}
           />
           <Tabs.Screen
-            name="explore"
+            name="Mapa"
             options={{
-              title: 'Estadísticas',
+              title: 'Mapa',
               tabBarIcon: ({ color, size }) => (
-                <Ionicons name="stats-chart-outline" size={size} color={color} />
+                <Ionicons name="map-outline" size={size} color={color} />
               ),
             }}
           />
@@ -67,6 +63,16 @@ export default function Layout() {
               ),
             }}
           />
+          <Tabs.Screen
+            name="Reportes"
+            options={{
+              title: 'Reportes',
+              tabBarIcon: ({ color, size }) => (
+                <Ionicons name="alert-circle-outline" size={size} color={color} />
+              ),
+            }}
+          />
+
         </Tabs>
       )}
     </View>

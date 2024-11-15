@@ -20,7 +20,6 @@ const ProfileScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [profileImage, setProfileImage] = useState(null);
 
-  // Función para enviar mensaje de emergencia
   const sendEmergencyMessage = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
@@ -45,7 +44,7 @@ const ProfileScreen = () => {
       }
 
       await axios.post('https://giro-safe-app.vercel.app/api/mandar-email', { 
-        email: emails.join(', '), // Concatenamos los correos en una sola cadena
+        email: emails.join(', '), 
         message 
       });
 
@@ -77,13 +76,11 @@ const ProfileScreen = () => {
   }, []);
 
   const handleSelectContact = (contact) => {
-    // Verificar si el contacto tiene un correo electrónico
     if (!contact.emails || contact.emails.length === 0) {
       Alert.alert("Sin correo electrónico", `${contact.name} no tiene un correo asignado.`);
-      return; // Salir de la función si no tiene correo
+      return;
     }
   
-    // Continuar agregando o quitando de la lista de seleccionados
     if (selectedContacts.includes(contact)) {
       setSelectedContacts(selectedContacts.filter((c) => c.id !== contact.id));
     } else {
@@ -162,31 +159,33 @@ const ProfileScreen = () => {
       </TouchableOpacity>
       <Text style={styles.imageInstructions}>Toca para seleccionar una foto de perfil</Text>
 
-      <TextInput
-        placeholder="Nombre"
-        value={firstName}
-        onChangeText={setFirstName}
-        style={styles.input}
-      />
-      <TextInput
-        placeholder="Apellidos"
-        value={lastName}
-        onChangeText={setLastName}
-        style={styles.input}
-      />
-      <TextInput
-        placeholder="Correo electrónico"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        style={styles.input}
-      />
-      <TextInput
-        placeholder="Tipo de sangre (Ej. O+, A-)"
-        value={bloodType}
-        onChangeText={setBloodType}
-        style={styles.input}
-      />
+      <View style={styles.inputContainer}>
+        <TextInput
+          placeholder="Ejemplo: Juan"
+          value={firstName}
+          onChangeText={setFirstName}
+          style={styles.input}
+        />
+        <TextInput
+          placeholder="Ejemplo: Pérez"
+          value={lastName}
+          onChangeText={setLastName}
+          style={styles.input}
+        />
+        <TextInput
+          placeholder="Ejemplo: correo@ejemplo.com"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          style={styles.input}
+        />
+        <TextInput
+          placeholder="Ejemplo: O+, A-"
+          value={bloodType}
+          onChangeText={setBloodType}
+          style={styles.input}
+        />
+      </View>
 
       <Text style={styles.subtitle}>Selecciona tus contactos de emergencia:</Text>
       <TextInput
@@ -214,7 +213,7 @@ const ProfileScreen = () => {
             </Text>
           </TouchableOpacity>
         )}
-        style={{ flex: 1 }}
+        contentContainerStyle={styles.contactListContainer}
       />
 
       {selectedContacts.length > 0 && (
@@ -238,6 +237,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: '#f0f4f7',
+    alignItems: 'center',
   },
   title: {
     fontSize: 24,
@@ -266,7 +266,12 @@ const styles = StyleSheet.create({
     color: '#888',
     marginBottom: 20,
   },
+  inputContainer: {
+    width: '80%', // Reduce el ancho al 80% y centra
+    alignItems: 'center',
+  },
   input: {
+    width: '100%',
     height: 45,
     borderColor: '#1E90FF',
     borderWidth: 1,
@@ -276,6 +281,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   searchInput: {
+    width: '80%', // Reduce el ancho al 80% y centra
     height: 40,
     borderColor: '#ccc',
     borderWidth: 1,
@@ -290,12 +296,17 @@ const styles = StyleSheet.create({
     color: '#333',
     marginBottom: 10,
   },
+  contactListContainer: {
+    alignItems: 'center',
+  },
   contactItem: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 10,
     borderBottomColor: '#eee',
     borderBottomWidth: 1,
+    width: '90%', // Campo de contacto más ancho
+    alignSelf: 'center', // Centrar el campo en la vista
   },
   contactText: {
     fontSize: 16,
@@ -307,6 +318,8 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#e6f7ff',
     borderRadius: 8,
+    width: '80%',
+    alignItems: 'center',
   },
   selectedContact: {
     fontSize: 16,

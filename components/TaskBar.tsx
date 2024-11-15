@@ -7,9 +7,10 @@ import { useNavigationState } from '@react-navigation/native';
 
 const tabs = [
   { name: 'Inicio', icon: 'home', route: 'PaginaPrincipal' },
-  { name: 'Estadísticas', icon: 'stats-chart', route: 'explore' },
+  { name: 'Mapa', icon: 'map-outline', route: 'Mapa' },
   { name: 'Guia', icon: 'book-outline', route: 'Guia' },
   { name: 'Perfil', icon: 'person-outline', route: 'Perfil' },
+  { name: 'Reportes', icon: 'settings-outline', route: 'Reportes' },
 ];
 
 const AnimatedTabBar = ({ navigation }: any) => {
