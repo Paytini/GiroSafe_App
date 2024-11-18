@@ -4,6 +4,7 @@ import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, ImageBackg
 import { useNavigation } from '@react-navigation/native';
 import * as Location from 'expo-location';
 
+
 const HomeScreen = () => {
   const navigation = useNavigation();
   const [locationPermissionGranted, setLocationPermissionGranted] = useState(null); // null para el estado inicial
@@ -54,6 +55,9 @@ const HomeScreen = () => {
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Guia")}>
           <Text style={styles.buttonText}>Descubre más sobre GiroSAFE</Text>
         </TouchableOpacity>
+
+        
+
       </ScrollView>
     </ImageBackground>
   );

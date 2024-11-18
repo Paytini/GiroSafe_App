@@ -1,12 +1,13 @@
 // components/ProfileScreen.tsx
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, FlatList, TouchableOpacity, StyleSheet, Alert, Image, Button, SafeAreaView } from 'react-native';
+import { View, Text, TextInput, FlatList, TouchableOpacity, StyleSheet, Alert, Image, Button, SafeAreaView, ScrollView,ImageBackground} from 'react-native';
 import * as Contacts from 'expo-contacts';
 import * as Location from 'expo-location';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import EmergencyAlertHandler from '../../components/ESP32Connection';
 import { BASE_URL } from '../../constants/vercel';
 
 const ProfileScreen = () => {
@@ -43,7 +44,7 @@ const ProfileScreen = () => {
         return;
       }
 
-      await axios.post('https://giro-safe-app.vercel.app/api/mandar-email', { 
+      await axios.post(`${BASE_URL}/api/mandar-email`, { 
         email: emails.join(', '), 
         message 
       });
@@ -141,110 +142,132 @@ const ProfileScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <TouchableOpacity style={styles.saveButton} onPress={handleSaveProfile}>
-        <Text style={styles.saveButtonText}>Guardar</Text>
-      </TouchableOpacity>
+    <ImageBackground source={require('../../assets/images/SL_092320_35480_11.jpg')} style={styles.background}>
+      <SafeAreaView style={styles.container}>
+         <EmergencyAlertHandler selectedContacts={selectedContacts} />
 
-      <Text style={styles.title}>Perfil de Usuario</Text>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <TouchableOpacity style={styles.saveButton} onPress={handleSaveProfile}>
+          <Ionicons name="save" size={28} color="#fff" />
+        </TouchableOpacity>
 
-      <Button title="Enviar Alerta de Emergencia" onPress={sendEmergencyMessage} />
+          <Text style={styles.title}>Perfil de Usuario</Text>
 
-      <TouchableOpacity onPress={pickImage} style={styles.profileImageContainer}>
-        {profileImage ? (
-          <Image source={{ uri: profileImage }} style={styles.profileImage} />
-        ) : (
-          <Ionicons name="camera" size={50} color="#ccc" />
-        )}
-      </TouchableOpacity>
-      <Text style={styles.imageInstructions}>Toca para seleccionar una foto de perfil</Text>
+          <Button title="Enviar Alerta de Emergencia" onPress={sendEmergencyMessage} />
 
-      <View style={styles.inputContainer}>
-        <TextInput
-          placeholder="Ejemplo: Juan"
-          value={firstName}
-          onChangeText={setFirstName}
-          style={styles.input}
-        />
-        <TextInput
-          placeholder="Ejemplo: Pérez"
-          value={lastName}
-          onChangeText={setLastName}
-          style={styles.input}
-        />
-        <TextInput
-          placeholder="Ejemplo: correo@ejemplo.com"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          style={styles.input}
-        />
-        <TextInput
-          placeholder="Ejemplo: O+, A-"
-          value={bloodType}
-          onChangeText={setBloodType}
-          style={styles.input}
-        />
-      </View>
-
-      <Text style={styles.subtitle}>Selecciona tus contactos de emergencia:</Text>
-      <TextInput
-        placeholder="Buscar contacto"
-        value={searchQuery}
-        onChangeText={handleSearch}
-        style={styles.searchInput}
-      />
-
-      <FlatList
-        data={filteredContacts}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.contactItem}
-            onPress={() => handleSelectContact(item)}
-          >
-            <Ionicons
-              name={selectedContacts.includes(item) ? "checkbox-outline" : "square-outline"}
-              size={24}
-              color={selectedContacts.includes(item) ? "#1E90FF" : "#ccc"}
-            />
-            <Text style={styles.contactText}>
-              {item.name} {item.emails ? `(${item.emails[0].email})` : ''}
-            </Text>
+          <TouchableOpacity onPress={pickImage} style={styles.profileImageContainer}>
+            {profileImage ? (
+              <Image source={{ uri: profileImage }} style={styles.profileImage} />
+            ) : (
+              <Ionicons name="camera" size={50} color="#ccc" />
+            )}
           </TouchableOpacity>
-        )}
-        contentContainerStyle={styles.contactListContainer}
-      />
+          <Text style={styles.imageInstructions}>Toca para seleccionar una foto de perfil</Text>
 
-      {selectedContacts.length > 0 && (
-        <View style={styles.selectedContactsContainer}>
-          <Text style={styles.subtitle}>Contactos de emergencia seleccionados:</Text>
-          {selectedContacts.map((contact, index) => (
-            <Text key={index} style={styles.selectedContact}>
-              {contact.name} ({contact.emails[0].email})
-            </Text>
-          ))}
-        </View>
-      )}
-    </SafeAreaView>
+          <View style={styles.inputContainer}>
+            <TextInput
+              placeholder="Ejemplo: Juan"
+              value={firstName}
+              onChangeText={setFirstName}
+              style={styles.input}
+              placeholderTextColor={'#999'}
+            />
+            <TextInput
+              placeholder="Ejemplo: Pérez"
+              value={lastName}
+              onChangeText={setLastName}
+              style={styles.input}
+              placeholderTextColor={'#999'}
+            />
+            <TextInput
+              placeholder="Ejemplo: correo@ejemplo.com"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              style={styles.input}
+              placeholderTextColor={'#999'}
+            />
+            <TextInput
+              placeholder="Ejemplo: O+, A-"
+              value={bloodType}
+              onChangeText={setBloodType}
+              style={styles.input}
+              placeholderTextColor={'#999'}
+            />
+          </View>
+
+          <Text style={styles.subtitle}>Selecciona tus contactos de emergencia:</Text>
+          <View style={styles.searchContainer}>
+            <Ionicons name="search" size={20} color="#ccc" style={styles.searchIcon} />
+            <TextInput
+              placeholder="Buscar contacto"
+              value={searchQuery}
+              onChangeText={handleSearch}
+              style={styles.searchInput}
+            />
+          </View>
+
+          <FlatList
+            data={filteredContacts}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={styles.contactItem}
+                onPress={() => handleSelectContact(item)}
+              >
+                <Ionicons
+                  name={selectedContacts.includes(item) ? "checkbox-outline" : "square-outline"}
+                  size={24}
+                  color={selectedContacts.includes(item) ? "#1E90FF" : "#ccc"}
+                />
+                <Text style={styles.contactText}>
+                  {item.name} {item.emails ? `(${item.emails[0].email})` : ''}
+                </Text>
+              </TouchableOpacity>
+            )}
+            contentContainerStyle={styles.contactListContainer}
+          />
+
+          {selectedContacts.length > 0 && (
+            <View style={styles.selectedContactsContainer}>
+              <Text style={styles.subtitle}>Contactos de emergencia seleccionados:</Text>
+              {selectedContacts.map((contact, index) => (
+                <Text key={index} style={styles.selectedContact}>
+                  {contact.name} ({contact.emails[0].email})
+                </Text>
+              ))}
+            </View>
+          )}
+        </ScrollView>
+      </SafeAreaView>
+    </ImageBackground>
   );
 };
 
 export default ProfileScreen;
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    resizeMode: 'cover', // Ajusta cómo se muestra la imagen
+  },
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#f0f4f7',
+    backgroundColor: 'rgba(0,0,0,0.5)', // Fondo semitransparente para el contenido
+  },
+  scrollContainer: {
     alignItems: 'center',
+    padding: 20,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#fff',
     marginBottom: 20,
     textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
   },
   profileImageContainer: {
     alignSelf: 'center',
@@ -263,81 +286,100 @@ const styles = StyleSheet.create({
   },
   imageInstructions: {
     textAlign: 'center',
-    color: '#888',
+    color: '#ccc',
     marginBottom: 20,
   },
   inputContainer: {
-    width: '80%', // Reduce el ancho al 80% y centra
+    width: '80%',
     alignItems: 'center',
   },
   input: {
     width: '100%',
     height: 45,
-    borderColor: '#1E90FF',
+    borderColor: '#fff',
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 10,
     backgroundColor: '#fff',
     marginBottom: 15,
-  },
-  searchInput: {
-    width: '80%', // Reduce el ancho al 80% y centra
-    height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    marginBottom: 15,
-    backgroundColor: '#fff',
   },
   subtitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#fff',
     marginBottom: 10,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    paddingHorizontal: 10,
+    marginBottom: 15,
+    height: 40,
+  },
+  searchIcon: {
+    marginRight: 10,
+  },
+  searchInput: {
+    flex: 1,
+    height: '100%',
   },
   contactListContainer: {
-    alignItems: 'center',
+    alignItems: 'stretch',
   },
   contactItem: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'flex-start',
     paddingVertical: 10,
     borderBottomColor: '#eee',
     borderBottomWidth: 1,
-    width: '90%', // Campo de contacto más ancho
-    alignSelf: 'center', // Centrar el campo en la vista
+    width: '90%',
+    alignSelf: 'flex-start',
   },
   contactText: {
     fontSize: 16,
-    color: '#333',
+    color: '#fff',
     marginLeft: 10,
   },
   selectedContactsContainer: {
     marginVertical: 20,
     padding: 10,
-    backgroundColor: '#e6f7ff',
+    backgroundColor: 'rgba(30,144,255,0.3)', // Fondo semitransparente
     borderRadius: 8,
     width: '80%',
     alignItems: 'center',
   },
   selectedContact: {
     fontSize: 16,
-    color: '#1E90FF',
+    color: '#fff',
     paddingVertical: 5,
   },
   saveButton: {
     position: 'absolute',
     top: 20,
     right: 20,
-    backgroundColor: '#1E90FF',
-    padding: 10,
-    borderRadius: 8,
-    zIndex: 1,
+    backgroundColor: '#1E90FF', // Color del botón
+    width: 60, // Ancho del botón
+    height: 60, // Alto del botón (igual al ancho para hacerlo circular)
+    borderRadius: 30, // Radio para que sea circular
+    justifyContent: 'center', // Centrar el contenido verticalmente
+    alignItems: 'center', // Centrar el contenido horizontalmente
+    shadowColor: '#000', // Color de la sombra
+    shadowOffset: { width: 0, height: 4 }, // Desplazamiento de la sombra
+    shadowOpacity: 0.3, // Opacidad de la sombra
+    shadowRadius: 4, // Difusión de la sombra
+    elevation: 5, // Elevación para sombras en Android
   },
   saveButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    color: '#fff', // Color del texto
+    fontSize: 20, // Tamaño del texto
+    fontWeight: 'bold', // Negrita para el texto
   },
 });

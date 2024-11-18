@@ -16,15 +16,23 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
+        "UIBackgroundModes": [
+          "remote-notification"
+        ],
         "NSPhotoLibraryUsageDescription": "La aplicación necesita acceso a la galería para seleccionar una foto de perfil.",
         "NSLocationWhenInUseUsageDescription": "Necesitamos tu ubicación para mostrar rutas seguras en el mapa."
-      }
+      },
+      "bundleIdentifier": "com.jpayta.GiroSafe"
     },
     "android": {
+      "permissions": [
+        "NOTIFICATIONS"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.jpayta.GiroSafe"
     },
     "web": {
       "bundler": "metro",
@@ -37,6 +45,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "71b40566-1091-422e-996a-6d4902c4628b"
+      }
+    },
+    "owner": "jpayta"
   }
 }
